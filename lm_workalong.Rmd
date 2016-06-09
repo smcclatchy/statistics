@@ -1,0 +1,82 @@
+---
+title: "lm"
+author: "Sue McClatchy"
+output: html_document
+---
+
+#### Simple Linear Regression
+
+##### Load the data. That's a capital o in the URL, not a zero. Mind the double quotes. These data are from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35.
+
+```{r}
+cc_data <- read.csv(file = "http://bit.ly/1OappUe")
+```
+
+##### Explore the data variables. The first 4 columns contain strain, sex, and ID numbers. The remaining contain phenotype measurements with abbreviated names.
+```{r}
+names(cc_data)
+```
+
+##### How many mice? 
+```{r}
+dim(cc_data)
+```
+
+##### How do the first few rows of data look? Note the NAs in the data. These are missing values and can complicate analyses unless specifically addressed. 
+```{r}
+head(cc_data)
+```
+
+##### We want to know about the relationship between glucose and triglyceride. Scatterplot the two variables.
+```{r, warning=FALSE}
+# Re-name the variables for clarity. The $ sign indicates a variable within the data, which we loaded in and named cc_data.
+glucose <- cc_data$GLU
+triglyceride <- cc_data$TG
+
+# Plot the data.
+plot(x = glucose, y = triglyceride)
+```
+
+##### Create a linear model of triglyceride as a response to glucose levels. Call the lm function by providing a formula and data.
+```{r, warning=FALSE}
+lm(formula = triglyceride ~ glucose, data = cc_data)
+```
+
+#####  The lm function repeats the call that you made, then provides model coefficients. This model provides parameters alpha (intercept) near 30.5, and beta of 0.5686. These are the parameters that minimize the sum of squared errors. In plain English, the model states that for every 1 unit increase in glucose, there's approximately a 1/2 unit increase in triglyceride starting from a value of 30.5. So, when glucose equals zero, triglyceride is approximately 30.5. When glucose has a value of 1, triglyceride has a value near 31, and so on.
+
+#####  Is it reasonable for glucose to have a value of zero? No. The alpha term or intercept is a starting point and doesn't have meaning beyond that.
+
+#####  When you call the lm function, you get very little information in return. To view all information for the model, save the model as a variable.
+```{r, warning=FALSE}
+model <- lm(formula = triglyceride ~ glucose, data = cc_data)
+```
+
+#####  Plot the regression line in a scatterplot.
+```{r, warning=FALSE}
+plot(x = glucose, y = triglyceride)
+abline(model)
+```
+
+#####  You can obtain more information about the model with the summary function. This will give you alpha and beta parameters, and information for model fit.
+```{r, warning=FALSE}
+summary(model)
+```
+
+##### The first item to inspect is the F-statistic, which is the last item in the summary. The F-statistic indicates whether or not the model is significant. If the model is not significant, there's no point in examining the rest. By convention a p-value of .05 or less indicates significance, or alternatively a probability of .05 or less that the model is not significant. This model has a p-value very close to zero.
+
+##### The summary repeats the call you made to the lm function. This is followed by the quartile values for the residuals, which serves as a quick check on the distribution of the residuals. The average of the residuals is assumed to be zero, so the median value should not be too far from zero. The minimum and maximum values can indicate outliers. Otherwise, minimum and maximum should have approximately equal absolute values. Check that the residuals are normally distributed by creating a histogram and a Q-Q plot.
+```{r, warning=FALSE}
+hist(x = model$residuals, breaks=20)
+plot(model, which=2)
+```
+
+##### The Q-Q plot indicates 3 points that stand out. Index numbers are supplied for each. Otherwise, most of the points lie along the diagonal line, indicating that the residuals are normally distributed.
+
+##### Back to the model summary. After a quick preview of the distribution of residuals, estimates of model coefficients are given along with standard error, t-test, and p-values for each. The asterisks indicate significance, such that a single asterisk indicates a p-value between 0.01 and 0.05. The standard error for each coefficient can be used to compute confidence intervals for each and to test whether a coefficient has a specific value. The residual standard error indicates the variation of the observations around the regression line.
+
+##### Plot the residuals against fitted values from the model. They should be well-scattered and should not form a curve such as a parabola, which would indicate that a quadratic, not a linear model, better fits the data. There should be constant variance vertically and points should scatter symmetrically around zero.
+```{r, warning=FALSE}
+plot(model, which=1)
+```
+
+##### Building linear models with R is straightforward, however, judging their significance and usefulness is not. The F-statistic indicates whether the model is statistically significant. The t statistics and p-values for the coefficients indicate their significance. The R squared value indicates usefulness and quality of the model by providing the fraction of the variance of y that is explained by the model. A plot of the residuals against fitted values indicates whether the model fits the data well, or whether some other kind of model would do better. Ultimately it's up to you to judge the significance, quality and fit of a linear model.

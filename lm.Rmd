@@ -1,0 +1,74 @@
+---
+title: "Linear Models with R"
+author: "Sue McClatchy"
+date: "June 9, 2016"
+output: ioslides_presentation
+---
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+
+cc_data <- read.csv(file = "http://phenome.jax.org/grpdoc/MPD_projdatasets/CGDpheno3.csv")
+```
+
+## A linear model can describe the relationship between two variables 
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + geom_point() + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375))
+```
+
+## Line of "best fit" to the data
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + geom_point() + geom_smooth(method="lm", se=FALSE, fullrange=TRUE) + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375))
+```
+
+## What is the best fit?
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + 
+    geom_point(alpha=0.05) + 
+    geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) +  annotate("text", x = 209, y = 250, label = "y[i]", parse=TRUE) +  annotate("text", x = 211, y = 165, label = "hat(y)[i]", parse=TRUE) +  annotate("text", x = 235, y = 210, label = "epsilon[i] == y[i]-hat(y)[i]", parse=TRUE) + annotate("pointrange", x=215, y=252, ymin=153, ymax=250, color="red", size=0.4) + annotate("text", x=249, y=230, label="error or residual")
+```
+
+## Squared errors
+```{r, echo=FALSE, warning=FALSE}
+ ggplot(data=cc_data, aes(x=GLU, y=TG)) + 
+geom_point(alpha=0.1) + 
+geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) + annotate("text", x = 209, y = 250, label = "y[i]", parse=TRUE) +  annotate("text", x = 211, y = 165, label = "hat(y)[i]", parse=TRUE) +  annotate("pointrange", x=215, y=252, ymin=153, ymax=250, color="red", size=0.4) + annotate("rect", xmin=215, xmax = 280, ymin=153, ymax = 252, alpha=0.6, bg="white", color="red") + annotate("text", x=249, y=230, label="error squared") + annotate("text", x = 250, y = 210, label = "epsilon[i]^2 == (y[i]-hat(y)[i])^2", parse=TRUE)
+```
+
+
+## Best fit minimizes sum of squared errors
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + 
+geom_point(alpha=0.1) + 
+geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) +  annotate("text", x = 209, y = 250, label = "y[i]", parse=TRUE) +  annotate("text", x = 211, y = 165, label = "hat(y)[i]", parse=TRUE) +  annotate("pointrange", x=215, y=252, ymin=153, ymax=250, color="red", size=0.4) + annotate("rect", xmin=215, xmax = 280, ymin=153, ymax = 252, alpha=0.6, bg="white", color="red") + annotate("text", x=249, y=230, label="error squared") + annotate("text", x = 250, y = 210, label = "epsilon[i]^2 == (y[i]-hat(y)[i])^2", parse=TRUE) + annotate("text", x = 85, y = 210, label = "paste(Sigma  , epsilon[i]^2)", parse=TRUE) + annotate("text", x = 85, y = 230, label = "sum of squared errors")
+```
+
+## Best fit minimizes sum of squared errors
+
+```{r, echo=FALSE, warning=FALSE}
+model <- lm(cc_data$TG ~ cc_data$GLU, data = cc_data, na.action = na.exclude)
+cc_data <- cbind(cc_data, fitted = fitted(model))
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + geom_point(alpha=0.5) + geom_smooth(method="lm", se=FALSE, fullrange=TRUE) + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) + geom_segment(aes(x=GLU, y=TG, xend = GLU, yend = fitted), color="red", alpha=0.5) + annotate("text", x = 85, y = 210, label = "paste(Sigma  , epsilon[i]^2)", parse=TRUE) + annotate("text", x = 85, y = 230, label = "sum of squared errors")
+```
+
+## Maximizes likelihood of observed data
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + 
+geom_point(alpha=0.6) + 
+geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) +  annotate("text", x = 209, y = 250, label = "y[i]", parse=TRUE) +  annotate("text", x = 211, y = 165, label = "hat(y)[i]", parse=TRUE) +  annotate("pointrange", x=215, y=252, ymin=153, ymax=250, color="red", size=0.4) + annotate("rect", xmin=215, xmax = 280, ymin=153, ymax = 252, alpha=0.6, bg="white", color="red") + annotate("text", x = 85, y = 210, label = "paste(Sigma  , epsilon[i]^2)", parse=TRUE) + annotate("text", x = 85, y = 245, label = "minimize \n sum of squared errors")
+```
+
+## Linear regression model
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + 
+geom_point(alpha=0.1) + 
+geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + lims(x=c(0,375),y=c(0,375)) + annotate("text", x = 209, y = 250, label = "y[i]", parse=TRUE) + annotate("text", x = 211, y = 165, label = "hat(y)[i]", parse=TRUE) + annotate("pointrange", x=215, y=252, ymin=153, ymax=250, color="red", size=0.4) + annotate("text", x = 220, y = 224, label = "epsilon[i]", parse=TRUE) + annotate("text", x = 165, y = 245, label = "y[i] == alpha + Beta*x[i] + epsilon[i]", parse=TRUE)  + annotate("text", x = 35, y = 25, label = "alpha == intercept", parse=TRUE) + annotate("text", x = 50, y = 125, label = "Beta == slope", parse=TRUE) + annotate("text", x = 50, y = 110, label = "(regression coefficient)") + geom_segment(aes(x=50, y=60), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4) + geom_segment(aes(x=120, y=100), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4)
+```
+
+## Identify model parameters that minimize squared error, maximize likelihood of data
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data=cc_data, aes(x=GLU, y=TG)) + geom_point(alpha=0.2) +  geom_smooth(method="lm", se=FALSE, fullrange=TRUE) + xlab("glucose") + ylab("triglyceride") + lims(x=c(0,375),y=c(0,375)) + annotate("text", x = 70, y = 335, label = "model + error") + annotate("text", x = 70, y = 310, label = "y[i] == 30.4762 + (0.5686)*x[i] + epsilon[i]", parse=TRUE) + annotate("text", x = 70, y = 290, label = "epsilon[i] %~% N(0, sigma^2)", parse=TRUE)+ annotate("text", x = 35, y = 25, label = "alpha == 30.4762", parse=TRUE) + annotate("text", x = 50, y = 125, label = "Beta == 0.5686", parse=TRUE) + annotate("text", x = 50, y = 110, label = "(regression coefficient)") + geom_segment(aes(x=50, y=60), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4) + geom_segment(aes(x=120, y=100), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4)
+```
