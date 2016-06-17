@@ -1,82 +1,148 @@
 ---
-title: "lm"
+title: "Simple linear regression"
 author: "Sue McClatchy"
 output: html_document
 ---
+#### Learning Objectives 
+> * Load data from a URL.
+> * Produce a scatterplot of data.
+> * Build and plot a linear model.
+> * Evaluate model quality and significance.
 
-#### Simple Linear Regression
+#### Introduction
+Linear models can be helpful in describing the relationships between two or more variables. We'll build linear models from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35. 
 
-##### Load the data. That's a capital o in the URL, not a zero. Mind the double quotes. These data are from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35.
-
+#### Load data
+Load the data from this shortened URL. Mind the double quotes.
 ```{r}
-cc_data <- read.csv(file = "http://bit.ly/1OappUe")
+cc_data <- read.csv(file = "http://bit.ly/CGDpheno3")
 ```
 
-##### Explore the data variables. The first 4 columns contain strain, sex, and ID numbers. The remaining contain phenotype measurements with abbreviated names.
+#### Explore data
+Explore the data variables. The first 4 columns contain strain, sex, and ID numbers. The remaining contain phenotype measurements with abbreviated names.
 ```{r}
 names(cc_data)
 ```
 
-##### How many mice? 
+How many mice? 
 ```{r}
 dim(cc_data)
 ```
 
-##### How do the first few rows of data look? Note the NAs in the data. These are missing values and can complicate analyses unless specifically addressed. 
+How do the first few rows of data look? Note the NAs in the data. These are missing values and can complicate analyses unless specifically addressed. 
 ```{r}
 head(cc_data)
 ```
 
-##### We want to know about the relationship between glucose and triglyceride. Scatterplot the two variables.
+#### Linear regression with a single predictor 
+We want to know about the relationship between glucose and triglyceride. Specifically we're interested in how glucose influences triglyceride levels if at all. Glucose is the single predictor in the model. If we were to add more predictors, such as sex or diet, we would no longer be using simple linear regression but rather multiple regression. 
+Scatterplot the two variables. Re-name the variables first for clarity. The $ sign indicates a variable within the data, which we loaded in and named cc_data.
 ```{r, warning=FALSE}
-# Re-name the variables for clarity. The $ sign indicates a variable within the data, which we loaded in and named cc_data.
 glucose <- cc_data$GLU
 triglyceride <- cc_data$TG
-
-# Plot the data.
 plot(x = glucose, y = triglyceride)
 ```
 
-##### Create a linear model of triglyceride as a response to glucose levels. Call the lm function by providing a formula and data.
+Create a linear model of triglyceride as a response to glucose levels. Call the lm function by providing a formula and data.
 ```{r, warning=FALSE}
 lm(formula = triglyceride ~ glucose, data = cc_data)
 ```
 
-#####  The lm function repeats the call that you made, then provides model coefficients. This model provides parameters alpha (intercept) near 30.5, and beta of 0.5686. These are the parameters that minimize the sum of squared errors. In plain English, the model states that for every 1 unit increase in glucose, there's approximately a 1/2 unit increase in triglyceride starting from a value of 30.5. So, when glucose equals zero, triglyceride is approximately 30.5. When glucose has a value of 1, triglyceride has a value near 31, and so on.
+The lm function repeats the call that you made, then provides model coefficients. This model provides parameters alpha (intercept) near 30.5, and beta of 0.5686. These are the parameters that minimize the sum of squared errors. In plain English, the model states that for every 1 unit increase in glucose, there's approximately a 1/2 unit increase in triglyceride starting from a value of 30.5. So, when glucose equals zero, triglyceride is approximately 30.5. When glucose has a value of 1, triglyceride has a value near 31, and so on.
 
-#####  Is it reasonable for glucose to have a value of zero? No. The alpha term or intercept is a starting point and doesn't have meaning beyond that.
+Is it reasonable for glucose to have a value of zero? No. The alpha term or intercept is a starting point and doesn't have meaning beyond that.
 
-#####  When you call the lm function, you get very little information in return. To view all information for the model, save the model as a variable.
+When you call the lm function, you get very little information in return. To view all information for the model, save the model as a variable.
 ```{r, warning=FALSE}
 model <- lm(formula = triglyceride ~ glucose, data = cc_data)
 ```
 
-#####  Plot the regression line in a scatterplot.
+Plot the regression line in a scatterplot.
 ```{r, warning=FALSE}
 plot(x = glucose, y = triglyceride)
 abline(model)
 ```
 
-#####  You can obtain more information about the model with the summary function. This will give you alpha and beta parameters, and information for model fit.
+#### Understanding model significance and quality
+You can obtain more information about the model with the summary function. This will give you alpha and beta parameters, and useful information for evaluating model fit, quality, and significance.
 ```{r, warning=FALSE}
 summary(model)
 ```
 
-##### The first item to inspect is the F-statistic, which is the last item in the summary. The F-statistic indicates whether or not the model is significant. If the model is not significant, there's no point in examining the rest. By convention a p-value of .05 or less indicates significance, or alternatively a probability of .05 or less that the model is not significant. This model has a p-value very close to zero.
+The first item to inspect is the last item in the summary, the F-statistic. The F-statistic indicates whether or not the model is significant. If the model is not significant, there's no point in examining the rest. By convention a p-value of .05 or less indicates significance, or alternatively a likelihood of .05 or less that the model is not significant. This model has a p-value very close to zero.
 
-##### The summary repeats the call you made to the lm function. This is followed by the quartile values for the residuals, which serves as a quick check on the distribution of the residuals. The average of the residuals is assumed to be zero, so the median value should not be too far from zero. The minimum and maximum values can indicate outliers. Otherwise, minimum and maximum should have approximately equal absolute values. Check that the residuals are normally distributed by creating a histogram and a Q-Q plot.
+The R squared value provides a measure of correlation and the fraction of the variance of y that is explained by the model. This indicates the usefulness and quality of the model.
+
+
+The summary repeats the call you made to the lm function. This is followed by the quartile values for the residuals, which serves as a quick check on the distribution of the residuals. The average of the residuals is assumed to be zero, so the median value should not be too far from zero. The minimum and maximum values can indicate outliers. Otherwise, minimum and maximum should have approximately equal absolute values. Check that the residuals are normally distributed by creating a histogram and a Q-Q plot.
+
 ```{r, warning=FALSE}
 hist(x = model$residuals, breaks=20)
 plot(model, which=2)
 ```
 
-##### The Q-Q plot indicates 3 points that stand out. Index numbers are supplied for each. Otherwise, most of the points lie along the diagonal line, indicating that the residuals are normally distributed.
+The Q-Q plot indicates 3 data points that stand out. Index numbers are supplied for each. Otherwise, most of the points lie along the diagonal line, indicating that the residuals are normally distributed.
 
-##### Back to the model summary. After a quick preview of the distribution of residuals, estimates of model coefficients are given along with standard error, t-test, and p-values for each. The asterisks indicate significance, such that a single asterisk indicates a p-value between 0.01 and 0.05. The standard error for each coefficient can be used to compute confidence intervals for each and to test whether a coefficient has a specific value. The residual standard error indicates the variation of the observations around the regression line.
+Back to the model summary. After a quick preview of the distribution of residuals, estimates of model coefficients are given along with standard error, t-test, and p-values for each. The asterisks indicate significance, such that a single asterisk indicates a p-value between 0.01 and 0.05. The standard error for each coefficient can be used to compute confidence intervals for each and to test whether a coefficient has a specific value. The residual standard error indicates the variation of the observations around the regression line.
 
-##### Plot the residuals against fitted values from the model. They should be well-scattered and should not form a curve such as a parabola, which would indicate that a quadratic, not a linear model, better fits the data. There should be constant variance vertically and points should scatter symmetrically around zero.
+Plot the residuals against fitted values from the model. They should be well-scattered and should not form a curve such as a parabola, which would indicate that a quadratic, not a linear model, better fits the data. There should be constant variance vertically and points should scatter symmetrically around zero.
 ```{r, warning=FALSE}
 plot(model, which=1)
 ```
 
-##### Building linear models with R is straightforward, however, judging their significance and usefulness is not. The F-statistic indicates whether the model is statistically significant. The t statistics and p-values for the coefficients indicate their significance. The R squared value indicates usefulness and quality of the model by providing the fraction of the variance of y that is explained by the model. A plot of the residuals against fitted values indicates whether the model fits the data well, or whether some other kind of model would do better. Ultimately it's up to you to judge the significance, quality and fit of a linear model.
+Building linear models with R is straightforward, however, judging their significance and usefulness is not. The F-statistic indicates whether the model is statistically significant. The t statistics and p-values for the coefficients indicate their significance. The R squared value indicates usefulness and quality of the model by providing the fraction of the variance of y that is explained by the model, as well as the correlation. A plot of the residuals against fitted values indicates whether the model fits the data well, or whether some other kind of model would do better. Ultimately it's up to you to judge the significance, quality and fit of a linear model.
+
+Let's look at one that is unmistakably good. Create a linear model of high-density lipoprotein (HDL) and cholesterol. HDL is a form of cholesterol, so essentially we're modeling one variable against itself.
+```{r, warning=FALSE}
+good_model <- lm(formula = HDL ~ CHOL, data = cc_data)
+```
+
+Plot the regression line in a scatterplot.
+```{r, warning=FALSE}
+plot(x = cc_data$CHOL, y = cc_data$HDL)
+abline(good_model)
+```
+```{r, warning=FALSE}
+summary(good_model)
+```
+
+Note the values for the F-statistic and the R-squared.
+
+```{r, warning=FALSE}
+hist(x = good_model$residuals, breaks=20)
+plot(good_model, which=2)
+```
+
+```{r, warning=FALSE}
+plot(good_model, which=1)
+```
+
+Now let's look at one that is unmistakably bad. Create a linear model of hemoglobin concentration distribution width (HDW) and bone area.
+
+```{r, warning=FALSE}
+bad_model <- lm(formula = HDW ~ bone_area, data = cc_data)
+```
+
+Plot the regression line in a scatterplot.
+```{r, warning=FALSE}
+plot(x = cc_data$bone_area, y = cc_data$HDW)
+abline(bad_model)
+```
+```{r, warning=FALSE}
+summary(bad_model)
+```
+
+Note the values for the F-statistic and the R-squared. Also notice that beta, the slope, is near zero, indicating no relationship between the two variables.
+
+```{r, warning=FALSE}
+hist(x = bad_model$residuals, breaks=40)
+plot(bad_model, which=2)
+```
+
+The histogram doesn't show a normal distribition, and mean residual value doesn't appear to be near zero. In the Q-Q plot most of the data points are off-diagonal.
+```{r, warning=FALSE}
+plot(bad_model, which=1)
+```
+
+The plot of residuals vs. fitted values appears parabolic, indicating poor model fit.
+
