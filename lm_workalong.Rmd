@@ -10,7 +10,7 @@ output: html_document
 > * Evaluate model quality and significance.
 
 #### Introduction
-Linear models can be helpful in describing the relationships between two or more variables. We'll build linear models from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35. 
+Linear models can be helpful in describing the relationships between two or more variables. We'll build linear models from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35. For more information about this data set, see the [CGDpheno3 data](http://phenome.jax.org/db/q?rtn=projects/details&id=439) at Mouse Phenome Database. 
 
 #### Load data
 Load the data from this shortened URL. Mind the double quotes.
