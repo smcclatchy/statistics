@@ -1,7 +1,7 @@
 ---
 title: "Linear Models with R"
 author: "Sue McClatchy"
-date: "June 17, 2016"
+date: "June 21, 2016"
 output: ioslides_presentation
 ---
 
@@ -9,7 +9,9 @@ output: ioslides_presentation
 
 - a single predictor/explanatory variable
 
-- slides and tutorial: github.com/smcclatchy/statistics
+- slides: http://bit.ly/lmslides
+
+- tutorial: http://bit.ly/lmtutor
 
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -125,3 +127,8 @@ geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  + xlab("X") + ylab("Y") + li
 ```{r, echo=FALSE, warning=FALSE}
 ggplot(data=cc_data, aes(x=GLU, y=TG)) + geom_point(alpha=0.2) +  geom_smooth(method="lm", se=FALSE, fullrange=TRUE) + xlab("glucose") + ylab("triglyceride") + lims(x=c(0,375),y=c(0,375)) + annotate("text", x = 70, y = 335, label = "model + error") + annotate("text", x = 70, y = 310, label = "y[i] == 30.4762 + (0.5686)*x[i] + epsilon[i]", parse=TRUE) + annotate("text", x = 70, y = 290, label = "epsilon[i] %~% N(0, sigma^2)", parse=TRUE)+ annotate("text", x = 35, y = 25, label = "alpha == 30.4762", parse=TRUE) + annotate("text", x = 50, y = 125, label = "Beta == 0.5686", parse=TRUE) + annotate("text", x = 50, y = 110, label = "(regression coefficient)") + geom_segment(aes(x=50, y=60), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4) + geom_segment(aes(x=120, y=100), data=cc_data, xend=50, yend=100, color="red", linetype="dashed", size = 0.4)
 ```
+
+## References
+1. Altman N, Krzywinski M. Points of Significance: Simple linear regression. Nat Meth. 2015;12(11):999-1000. doi: 10.1038/nmeth.3627.
+2. Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb 1;190(2):413-35.
+3. Dalgaard, Peter. Introductory statistics with R. Springer Science & Business Media, 2008.

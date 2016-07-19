@@ -10,7 +10,7 @@ output: html_document
 > * Evaluate model quality and significance.
 
 #### Introduction
-Linear models can be helpful in describing the relationships between two or more variables. We'll build linear models from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb;190(2):413-35. For more information about this data set, see the [CGDpheno3 data](http://phenome.jax.org/db/q?rtn=projects/details&id=439) at Mouse Phenome Database. 
+Linear models can be helpful in describing the relationships between two or more variables. In simple linear regression we aim to find the association between a single predictor variable, x, and a single response variable y [Altman & Krzywinski, 2015](http://www.nature.com/nmeth/journal/v12/n11/full/nmeth.3627.html). We'll build linear models from a multi-system survey of mouse physiology in 8 inbred founder strains and 54 F1 hybrids of the Collaborative Cross. The study is described in [Lenarcic et al, 2012](http://www.genetics.org/content/190/2/413.full). For more information about this data set, see the [CGDpheno3 data](http://phenome.jax.org/db/q?rtn=projects/details&id=439) at Mouse Phenome Database. 
 
 #### Load data
 Load the data from this shortened URL. Mind the double quotes.
@@ -64,7 +64,7 @@ abline(model)
 ```
 
 #### Understanding model significance and quality
-You can obtain more information about the model with the summary function. This will give you alpha and beta parameters, and useful information for evaluating model fit, quality, and significance.
+You can obtain more information about the model with the summary function [(Dalgaard, 2008)](https://books.google.com/books?id=zZFCAAAAQBAJ). This will give you alpha and beta parameters, and useful information for evaluating model fit, quality, and significance.
 ```{r, warning=FALSE}
 summary(model)
 ```
@@ -139,10 +139,16 @@ hist(x = bad_model$residuals, breaks=40)
 plot(bad_model, which=2)
 ```
 
-The histogram doesn't show a normal distribition, and mean residual value doesn't appear to be near zero. In the Q-Q plot most of the data points are off-diagonal.
+The histogram doesn't show a normal distribution, and mean residual value doesn't appear to be near zero. In the Q-Q plot most of the data points are off-diagonal.
 ```{r, warning=FALSE}
 plot(bad_model, which=1)
 ```
 
 The plot of residuals vs. fitted values appears parabolic, indicating poor model fit.
+
+#### References
+
+1. Altman N, Krzywinski M. Points of Significance: Simple linear regression. Nat Meth. 2015;12(11):999-1000. doi: 10.1038/nmeth.3627.
+2. Lenarcic AB, Svenson KL, Churchill GA, Valdar W. A general Bayesian approach to analyzing diallel crosses of inbred strains. Genetics. 2012 Feb 1;190(2):413-35.
+3. Dalgaard, Peter. Introductory statistics with R. Springer Science & Business Media, 2008.
 
